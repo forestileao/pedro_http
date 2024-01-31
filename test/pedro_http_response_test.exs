@@ -4,17 +4,17 @@ defmodule Pedro.HttpResponseTest do
 
   @http_response %HttpResponse{
     headers: %{"Content-Type" => "application/json"},
-    body: "{\"key\":\"value\"}",
+    body: "<h1>Hello World!</h1>",
     status: 200
   }
 
   test "to_string/1 returns a correctly formatted HTTP response" do
     expected_response = """
     HTTP/1.1 200\r
-    content-length: 15\r
+    content-length: #{byte_size(@http_response.body)}\r
     content-type: text/html\r
     \r
-    {"key":"value"}
+    #{@http_response.body}
     """
     assert HttpResponse.to_string(@http_response) == expected_response
   end
