@@ -1,8 +1,5 @@
-defmodule PedroHttpServerTest do
+defmodule Pedro.HttpServerTest do
   use ExUnit.Case
-  doctest PedroHttpServer
+  doctest Pedro.HttpServer
 
-  test "greets the world" do
-    assert PedroHttpServer.hello() == :world
-  end
 end
