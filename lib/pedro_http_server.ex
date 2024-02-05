@@ -12,6 +12,13 @@ defmodule Pedro.HttpServer do
     reuseaddr: true
   ]
 
+  def child_spec(init_args) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start, init_args}
+    }
+  end
+
   @spec start(char()) :: :ok
   def start(port) when is_integer(port) do
     ensure_configured_responder!()
