@@ -3,7 +3,7 @@ defmodule Pedro.HttpResponseTest do
   alias Pedro.HttpResponse
 
   @http_response %HttpResponse{
-    headers: %{"Content-Type" => "application/json"},
+    headers: %{"Content-Type" => "text/html"},
     body: "<h1>Hello World!</h1>",
     status: 200
   }

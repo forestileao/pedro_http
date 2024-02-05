@@ -10,7 +10,7 @@ defmodule Pedro.HttpResponse do
     status: non_neg_integer()
   }
   @http_version 1.1
-  @default_content_type "text/html"
+  @default_content_type "text/plain"
 
   def to_string(%__MODULE__{
     headers: headers,
@@ -43,7 +43,7 @@ defmodule Pedro.HttpResponse do
 
   defp add_default_headers(headers, content_type, byte_size) do
     headers
-    |> Map.put("content-type", content_type)
-    |> Map.put("content-length", byte_size)
+    |> Map.put_new("content-type", content_type)
+    |> Map.put_new("content-length", byte_size)
   end
 end
