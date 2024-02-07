@@ -43,11 +43,11 @@ defmodule Pedro.HttpServer do
 
     Logger.info("Received HTTP request #{method} at #{path}")
 
-    respond(req_socket, method, path)
+    spawn(__MODULE__, :respond, [req_socket, method, path])
     listen(listen_socket)
   end
 
-  defp respond(req_socket, method, path) do
+  def respond(req_socket, method, path) do
     %Pedro.HttpResponse{} = resp = responder().resp(req_socket, method, path)
     resp_string = resp |> Pedro.HttpResponse.to_string()
 
