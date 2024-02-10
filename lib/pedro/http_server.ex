@@ -25,8 +25,6 @@ defmodule Pedro.HttpServer do
 
   @spec start(char()) :: :ok
   def start(port) when is_integer(port) do
-    ensure_configured_responder!()
-
     case :gen_tcp.listen(port, @listener_options) do
       {:ok, listen_socket} ->
         Logger.info "Started Http server on port #{port}"
@@ -47,34 +45,21 @@ defmodule Pedro.HttpServer do
 
     Logger.info("Received HTTP request #{method} at #{path}")
 
-    spawn(__MODULE__, :respond, [req_socket, method, path])
+    dispatch(req_socket, method, path)
     listen(listen_socket)
   end
 
-  def respond(req_socket, method, path) do
-    %Pedro.HttpResponse{} = resp = responder().resp(req_socket, method, path)
-    resp_string = resp |> Pedro.HttpResponse.to_string()
+  def dispatch(req_socket, method, path) do
+    case dispatcher() do
+      {mod, opts} ->
+        mod.init(req_socket, method, path, opts)
 
-    :gen_tcp.send(req_socket, resp_string)
-
-    Logger.info("Response sent: \n#{resp_string}")
-    :gen_tcp.close(req_socket)
-  end
-
-  defp responder() do
-    Application.get_env(:pedro_http_server, :responder)
-  end
-
-
-  @responder_config_error """
-  You must configure a responder for the HTTP server.
-  Add the following to your config.exs:
-  config :pedro_http_server, responder: YourModule
-  """
-  defp ensure_configured_responder!() do
-    case responder() do
-      nil -> raise @responder_config_error
-      _ -> :ok
+      mod ->
+        mod.init(req_socket, method, path, [])
     end
+  end
+
+  defp dispatcher() do
+    Application.get_env(:pedro_http_server, :dispatcher)
   end
 end
